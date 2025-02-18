@@ -13,7 +13,7 @@ fn test_initalize() {
     let e = Env::default();
     e.set_default_info();
     e.mock_all_auths();
-    e.budget().reset_unlimited();
+    e.cost_estimate().budget().reset_unlimited();
     let admin = Address::generate(&e);
     let base = Asset::Other(Symbol::new(&e, "BASE"));
     let asset_0 = Asset::Stellar(Address::generate(&e));

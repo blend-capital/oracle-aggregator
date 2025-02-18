@@ -1,5 +1,5 @@
 use crate::types::OracleConfig;
-use sep_40_oracle::Asset;
+use sep_40_oracle::{Asset, PriceData};
 use soroban_sdk::{
     contracttype, unwrap::UnwrapOptimized, Address, Env, IntoVal, Symbol, TryFromVal, Val, Vec,
 };
@@ -18,6 +18,7 @@ const LEDGER_BUMP_SHARED: u32 = 31 * ONE_DAY_LEDGERS;
 #[contracttype]
 pub enum AggregatorDataKey {
     AssetConfig(Asset),
+    LastFetchedPrice(Asset),
     CircuitBreakerStatus(Asset),
     CircuitBreakerTimeout(Asset),
     Blocked(Asset),
@@ -119,7 +120,6 @@ pub fn has_asset_config(e: &Env, asset: &Asset) -> bool {
     e.storage().persistent().has(&key)
 }
 
-
 pub fn set_base(e: &Env, base: &Asset) {
     e.storage()
         .persistent()
@@ -166,4 +166,16 @@ pub fn set_blocked_status(e: &Env, asset: &Asset, blocked: &bool) {
 pub fn get_blocked_status(e: &Env, asset: &Asset) -> bool {
     let key = AggregatorDataKey::Blocked(asset.clone());
     get_persistent_default(&e, &key, false, LEDGER_THRESHOLD_SHARED, LEDGER_BUMP_SHARED)
+}
+
+pub fn set_last_fetched_price(e: &Env, asset: &Asset, price: &PriceData) {
+    let key = AggregatorDataKey::LastFetchedPrice(asset.clone());
+    e.storage()
+        .persistent()
+        .set::<AggregatorDataKey, PriceData>(&key, price);
+}
+
+pub fn get_last_fetched_price(e: &Env, asset: &Asset) -> Option<PriceData> {
+    let key = AggregatorDataKey::LastFetchedPrice(asset.clone());
+    get_persistent_default(e, &key, None, LEDGER_THRESHOLD_SHARED, LEDGER_BUMP_SHARED)
 }

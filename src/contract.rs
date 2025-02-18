@@ -49,8 +49,14 @@ impl PriceFeedTrait for OracleAggregator {
         if let Some(price) = price {
             let decimals = storage::get_decimals(&e);
             let normalized_price = normalize_price(price.clone(), &decimals, &config.decimals);
+            storage::set_last_fetched_price(&e, &asset, &normalized_price);
             return Some(normalized_price);
         } else {
+            if let Some(price) = storage::get_last_fetched_price(&e, &asset) {
+                if price.timestamp + 5 * 60 >= e.ledger().timestamp() {
+                    return Some(price);
+                }
+            }
             return None;
         }
     }
@@ -108,7 +114,16 @@ impl OracleAggregator {
         storage::set_assets(&e, &assets);
     }
 
-    /// Fetch the confugration of an asset
+    /// Fetch the configuration of an asset
+    ///
+    /// ### Arguments
+    /// * `asset` - The asset to fetch the configuration
+    ///
+    /// ### Returns
+    /// * The configuration of the asset
+    ///
+    /// ### Errors
+    /// * `AssetNotFound` - The asset is not found
     pub fn config(e: Env, asset: Asset) -> OracleConfig {
         if storage::has_asset_config(&e, &asset) {
             return storage::get_asset_config(&e, &asset);
