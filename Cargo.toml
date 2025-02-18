@@ -29,6 +29,6 @@ testutils = ["soroban-sdk/testutils"]
 soroban-sdk = "22.0.7"
 sep-40-oracle = "1.2.0"
 
-[dev_dependencies]
+[dev-dependencies]
 soroban-sdk = { version = "22.0.7", features = ["testutils"] }
 sep-40-oracle = {version = "1.2.0",  features = ["testutils"]}
