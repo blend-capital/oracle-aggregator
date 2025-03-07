@@ -1,6 +1,6 @@
 [package]
 name = "oracle-aggregator"
-version = "1.0.0"
+version = "2.0.0"
 authors = ["Script3 Ltd. <gm@script3.io>"]
 license = "MIT"
 edition = "2021"
@@ -27,8 +27,8 @@ testutils = ["soroban-sdk/testutils"]
 
 [dependencies]
 soroban-sdk = "22.0.7"
-sep-40-oracle = "1.2.0"
+sep-40-oracle = "1.2.1"
 
 [dev-dependencies]
 soroban-sdk = { version = "22.0.7", features = ["testutils"] }
-sep-40-oracle = {version = "1.2.0",  features = ["testutils"]}
+sep-40-oracle = {version = "1.2.1",  features = ["testutils"]}

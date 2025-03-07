@@ -1,6 +1,6 @@
 #![cfg(test)]
 
-use crate::{contract::OracleAggregatorClient, types::OracleConfig};
+use crate::contract::OracleAggregatorClient;
 use sep_40_oracle::{
     testutils::{Asset as MockAsset, MockPriceOracleClient, MockPriceOracleWASM},
     Asset,
@@ -61,21 +61,14 @@ pub fn create_oracle_aggregator<'a>(
     e: &Env,
     admin: &Address,
     base: &Asset,
-    assets: &Vec<Asset>,
-    asset_configs: &Vec<OracleConfig>,
     decimals: &u32,
+    max_age: &u64,
 ) -> (Address, OracleAggregatorClient<'a>) {
     let oracle_aggregator_address = Address::generate(&e);
     e.register_at(
         &oracle_aggregator_address,
         oracle_aggregator::WASM,
-        (
-            admin,
-            base.clone(),
-            assets.clone(),
-            asset_configs.clone(),
-            decimals,
-        ),
+        (admin, base.clone(), decimals, max_age),
     );
     let oracle_aggregator_client: OracleAggregatorClient<'a> =
         OracleAggregatorClient::new(&e, &oracle_aggregator_address);
@@ -135,38 +128,13 @@ pub fn setup_default_aggregator<'a>(
         &600,
     );
 
-    let asset_configs = Vec::from_array(
-        &e,
-        [
-            OracleConfig {
-                oracle_id: oracle_0_1_id.clone(),
-                decimals: 9,
-                resolution: 300,
-                asset: oracle_asset_0,
-            },
-            OracleConfig {
-                oracle_id: oracle_0_1_id,
-                decimals: 9,
-                resolution: 300,
-                asset: oracle_asset_1,
-            },
-            OracleConfig {
-                oracle_id: oracle_2_id,
-                decimals: 6,
-                resolution: 600,
-                asset: oracle_asset_2,
-            },
-        ],
-    );
-    let (_, aggregator_client) = create_oracle_aggregator(
-        e,
-        admin,
-        base,
-        &&vec![e, asset_0.clone(), asset_1.clone(), asset_2.clone()],
-        &asset_configs,
-        &7,
-    );
+    oracle_0_1.set_price(&vec![&e, 0i128, 0i128], &0);
+    oracle_2.set_price(&vec![&e, 0i128], &0);
 
+    let (_, aggregator_client) = create_oracle_aggregator(e, admin, base, &7, &900);
+    aggregator_client.add_asset(&asset_0, &oracle_0_1_id, &oracle_asset_0);
+    aggregator_client.add_asset(&asset_1, &oracle_0_1_id, &oracle_asset_1);
+    aggregator_client.add_asset(&asset_2, &oracle_2_id, &oracle_asset_2);
     return (aggregator_client, oracle_0_1, oracle_2);
 }
 

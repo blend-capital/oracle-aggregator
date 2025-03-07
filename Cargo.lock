@@ -784,7 +784,7 @@ checksum = "3fdb12b2476b595f9358c5161aa467c2438859caa136dec86c26fdd2efe17b92"
 
 [[package]]
 name = "oracle-aggregator"
-version = "1.0.0"
+version = "2.0.0"
 dependencies = [
  "sep-40-oracle",
  "soroban-sdk",
@@ -943,9 +943,9 @@ checksum = "b97ed7a9823b74f99c7742f5336af7be5ecd3eeafcb1507d1fa93347b1d589b0"
 
 [[package]]
 name = "sep-40-oracle"
-version = "1.2.0"
+version = "1.2.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "1effb50cdf810aa3fa35911da09bd1387bd823e953d515a16c3e4c0fcd42da75"
+checksum = "43469454adca83f6177c4c82cfe456ac1bf4c5de85281cfc36b5550b2acb7b2a"
 dependencies = [
  "soroban-sdk",
 ]
